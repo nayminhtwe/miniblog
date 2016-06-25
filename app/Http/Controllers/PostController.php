@@ -26,7 +26,7 @@ class PostController extends Controller
          * Check the user authentication for the PostController.
          *
          */
-//        $this->middleware('auth',['except'=>['index','show']]);
+       $this->middleware('auth',['except'=>['index','show']]);
     }
     public function index()
     {
@@ -135,10 +135,17 @@ class PostController extends Controller
 
             $tagsIds = $request->input('tag_list');
         /**
-         * sync the list of tags into the database.
+         * Delete and Sync the list of tags into the database.
          *
          */
-            $post->tags()->sync($tagsIds);
+            if(is_null($tagsIds))
+            {
+                $post->tags()->detach();
+            }
+            else
+            {
+                $post->tags()->sync($tagsIds);
+            }
             return redirect()->route("post.index");
         
     }
